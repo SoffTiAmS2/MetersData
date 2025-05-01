@@ -16,6 +16,7 @@ set(LIBS_DIR ${PROJECT_SOURCE_DIR}/external_libs)
 # Сбор исходных и заголовочных файлов
 file(GLOB_RECURSE SOURCES
     ${SOURCE_DIR}/main.cpp
+    "${SOURCE_DIR}/Core/*.cpp"
     "${SOURCE_DIR}/Data/*.cpp"
     "${SOURCE_DIR}/Parsers/*.cpp"
     "${SOURCE_DIR}/utils/*.cpp"

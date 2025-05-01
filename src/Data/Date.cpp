@@ -19,5 +19,9 @@ const int Date::getDay() const {
 
 
 const std::string Date::toString() const {
-    return std::to_string(year) + ' ' + std::to_string(month) + ' ' + std::to_string(day);
+    std::string dateStr;
+    dateStr += std::to_string(year) + '.';
+    dateStr += month > 9 ? std::to_string(month)+ '.' : '0' + std::to_string(month)+ '.';
+    dateStr += day > 9 ? std::to_string(day) : '0' + std::to_string(day);
+    return dateStr;
 }

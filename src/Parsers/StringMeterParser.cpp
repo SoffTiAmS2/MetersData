@@ -40,7 +40,7 @@ std::string StringMeterParser::typeParse(const std::string& token){
         throw std::invalid_argument("Empty Type");
     }
 
-    return token.substr(start, end - start);
+    return token.substr(start, end - start-1);
 }
 
 Date StringMeterParser::dateParse(const std::string& token) {
@@ -72,7 +72,11 @@ float StringMeterParser::valueParse(const std::string& token){
         throw std::invalid_argument("Invalid value format: " + token);
     }
 
-    return std::stof(token);
+    std::string floatStr = token;
+
+    // Заменяем запятую на точку
+    std::replace(floatStr.begin(), floatStr.end(), ',', '.');
+    return std::stof(floatStr);
 
 }
 
