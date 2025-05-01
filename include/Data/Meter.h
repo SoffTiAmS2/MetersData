@@ -8,17 +8,15 @@ private:
     Date date;
     float value;
 
-public:
+public: 
     // Конструктор
     Meter(std::string type, Date date, float value);
 
     // Геттеры
-    const std::string& getType() const { return type; }
-    const Date& getDate() const { return date; }
-    float getValue() const { return value; }
+    const std::string& getType() const;
+    const Date& getDate() const;
+    const float getValue() const;
 
     // Метод для строкового представления
-    std::string toString() const {
-        return type + date.toString() + std::to_string(value);
-    }
+    std::string toString() const;
 };
