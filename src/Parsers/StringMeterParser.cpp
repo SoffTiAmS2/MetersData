@@ -28,7 +28,7 @@ std::vector<std::string> StringMeterParser::splitString(const std::string& input
     return Tokens;
 }
 
-std::string typeParse(const std::string& token){
+std::string StringMeterParser::typeParse(const std::string& token){
     if (!Validator::isValidType(token)) {
         throw std::invalid_argument("Empty Type");
     }
@@ -67,7 +67,7 @@ Date StringMeterParser::dateParse(const std::string& token) {
     return Date(year, month, day);
 }
 
-float valueParse(const std::string& token){
+float StringMeterParser::valueParse(const std::string& token){
     if(!Validator::isValidValue(token)){
         throw std::invalid_argument("Invalid value format: " + token);
     }
