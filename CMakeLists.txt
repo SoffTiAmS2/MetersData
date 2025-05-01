@@ -14,11 +14,16 @@ set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 set(LIBS_DIR ${PROJECT_SOURCE_DIR}/external_libs)
 
 # Сбор исходных и заголовочных файлов
-file(GLOB_RECURSE SOURCES "${SOURCE_DIR}/*.cpp")
-file(GLOB_RECURSE INCLUDE "${INCLUDE_DIR}/*.h")
+file(GLOB_RECURSE SOURCES
+    ${SOURCE_DIR}/main.cpp
+    # ${SOURCE_DIR}/Data/Date.cpp
+    "${SOURCE_DIR}/Parsers/*.cpp"
+    "${SOURCE_DIR}/utils/*.cpp"
+)
+# file(INCLUDE "${INCLUDE_DIR}/*.h")
 
 # Подключение директорий для заголовочных файлов
 include_directories(${INCLUDE_DIR})
 
 # Создание исполняемого файла
-add_executable(${PROJECT_NAME} ${SOURCES} ${INCLUDE})
+add_executable(${PROJECT_NAME} ${SOURCES})
