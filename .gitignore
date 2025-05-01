@@ -2,3 +2,6 @@ build/
 .DS_Store
 .cache/
 .vscode/
+*.tmp
+scripts/
+txt.txt
