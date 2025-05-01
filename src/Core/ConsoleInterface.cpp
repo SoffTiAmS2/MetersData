@@ -1,3 +1,7 @@
+
+#include <iostream>
+#include <string>
+#include "Data/Meter.h"
 #include "Core/ConsoleInterface.h"
 #include "Parsers/StringMeterParser.h"
 
