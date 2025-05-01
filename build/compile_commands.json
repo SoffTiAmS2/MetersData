@@ -1,0 +1,20 @@
+[
+{
+  "directory": "/Users/nerdvana/Desktop/MP/MetersData/build",
+  "command": "/usr/bin/clang++  -I/Users/nerdvana/Desktop/MP/MetersData/include -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -o CMakeFiles/MetersData.dir/src/StringMeterParser.cpp.o -c /Users/nerdvana/Desktop/MP/MetersData/src/StringMeterParser.cpp",
+  "file": "/Users/nerdvana/Desktop/MP/MetersData/src/StringMeterParser.cpp",
+  "output": "CMakeFiles/MetersData.dir/src/StringMeterParser.cpp.o"
+},
+{
+  "directory": "/Users/nerdvana/Desktop/MP/MetersData/build",
+  "command": "/usr/bin/clang++  -I/Users/nerdvana/Desktop/MP/MetersData/include -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -o CMakeFiles/MetersData.dir/src/Validator.cpp.o -c /Users/nerdvana/Desktop/MP/MetersData/src/Validator.cpp",
+  "file": "/Users/nerdvana/Desktop/MP/MetersData/src/Validator.cpp",
+  "output": "CMakeFiles/MetersData.dir/src/Validator.cpp.o"
+},
+{
+  "directory": "/Users/nerdvana/Desktop/MP/MetersData/build",
+  "command": "/usr/bin/clang++  -I/Users/nerdvana/Desktop/MP/MetersData/include -g -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX15.2.sdk -o CMakeFiles/MetersData.dir/src/main.cpp.o -c /Users/nerdvana/Desktop/MP/MetersData/src/main.cpp",
+  "file": "/Users/nerdvana/Desktop/MP/MetersData/src/main.cpp",
+  "output": "CMakeFiles/MetersData.dir/src/main.cpp.o"
+}
+]
