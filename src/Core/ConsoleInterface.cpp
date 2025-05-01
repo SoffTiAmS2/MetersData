@@ -4,7 +4,7 @@
 void ConsoleInterface::printInstructions() const {
     std::cout << "Введите данные в формате: 'Тип Дата Значение'\n";
     std::cout << "Пример: \"Вода 4 этаж\" 2023.10.05 150.75\n";
-    std::cout << "Для выхода введите 'exit'.\n";
+    std::cout << "Для выхода введите 'exit' или 'выход'.\n";
 }
 
 void ConsoleInterface::run() {
@@ -15,7 +15,7 @@ void ConsoleInterface::run() {
         std::cout << "\nВведите данные: ";
         std::getline(std::cin, input);
 
-        if (input == "exit") {
+        if (input == "exit" or input == "выход") {
             std::cout << "Выход из программы.\n";
             break;
         }

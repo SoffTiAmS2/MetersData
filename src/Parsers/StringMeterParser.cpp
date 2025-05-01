@@ -30,14 +30,14 @@ std::vector<std::string> StringMeterParser::splitString(const std::string& input
 
 std::string StringMeterParser::typeParse(const std::string& token){
     if (!Validator::isValidType(token)) {
-        throw std::invalid_argument("Empty Type");
+        throw std::invalid_argument("Пустое поле \" Тип \" ");
     }
     std::string TypeStr;
     int start = token[0] == '"' ? 1 : 0;
     int end = token[token.size()-1] == '"' ? token.size() : token.size()-1;
 
-    if(start == end){
-        throw std::invalid_argument("Empty Type");
+    if(start == end-1){
+        throw std::invalid_argument("Пустое поле \" Тип \" ");
     }
 
     return token.substr(start, end - start-1);
@@ -46,7 +46,7 @@ std::string StringMeterParser::typeParse(const std::string& token){
 Date StringMeterParser::dateParse(const std::string& token) {
     // Проверяем формат даты
     if (!Validator::isValidDateFormat(token)) {
-        throw std::invalid_argument("Invalid date format: " + token);
+        throw std::invalid_argument("Неправильный формат даты: " + token);
     }
 
     // Находим позиции точек
@@ -60,7 +60,7 @@ Date StringMeterParser::dateParse(const std::string& token) {
 
     // Проверяем корректность значений даты
     if (!Validator::isValidDateValues(year, month, day)) {
-        throw std::invalid_argument("Invalid date values: " + token);
+        throw std::invalid_argument("Неправильный формат даты: " + token);
     }
 
     // Возвращаем объект Date
@@ -69,7 +69,7 @@ Date StringMeterParser::dateParse(const std::string& token) {
 
 float StringMeterParser::valueParse(const std::string& token){
     if(!Validator::isValidValue(token)){
-        throw std::invalid_argument("Invalid value format: " + token);
+        throw std::invalid_argument("Неправильный формат значения " + token);
     }
 
     std::string floatStr = token;
@@ -84,7 +84,7 @@ Meter StringMeterParser::parse(const std::string& input) {
     try {
         std::vector<std::string> tokens = splitString(input);
         if (tokens.size() < 3) {
-            throw std::invalid_argument("Insufficient tokens in input: " + input);
+            throw std::invalid_argument("Недостаточно данных в: " + input);
         }
 
         std::string typeStr = tokens[tokens.size() - 3]; 

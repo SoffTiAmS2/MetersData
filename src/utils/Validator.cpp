@@ -5,16 +5,23 @@ bool Validator::isValidType(const std::string& type) {
 }
 
 bool Validator::isValidDateFormat(const std::string& dateStr) {
-    if (dateStr.size() != 10) return false;
-    
-    if (dateStr[4] != '.' || dateStr[7] != '.') return false;
 
-    for (size_t i = 0; i < dateStr.size(); ++i) {
-        if (i == 4 || i == 7) continue;
-        if (!isdigit(dateStr[i])) return false;
+    bool ok = true;
+    int numSeparators = 0;
+    for (int i = 0; i < dateStr.size()-1; i++) {
+        if(dateStr[i] == '.'){
+            numSeparators++;
+            continue;
+        }
+
+        if(!isdigit(dateStr[i])){
+            ok = false;
+            break;
+        }
+
     }
-
-    return true;
+    if(numSeparators != 2) ok = false;
+    return ok;
 }
 
 bool Validator::isValidDateValues(int year, int month, int day) {
