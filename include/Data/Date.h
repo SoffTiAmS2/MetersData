@@ -2,7 +2,6 @@
 #include <string>
 
 
-
 class Date{
 private:
     // поля год месяц день

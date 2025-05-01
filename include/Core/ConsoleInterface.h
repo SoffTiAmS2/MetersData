@@ -1,9 +1,7 @@
 #pragma once
-#include <string>
-#include <iostream>
+
 #include <memory>
 #include "interfaces/IMeterParser.h"
-#include "Data/Meter.h"
 
 class ConsoleInterface {
 private:
