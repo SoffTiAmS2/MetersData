@@ -7,6 +7,7 @@
 
 class ConsoleInterface {
 private:
+    // Указатель на парсер
     std::unique_ptr<IMeterParser> parser;
 
     // Вывод инструкций
