@@ -2,6 +2,7 @@
 #include <string>
 
 
+
 class Date{
 private:
     // поля год месяц день
@@ -13,10 +14,10 @@ public:
     Date(int year, int month, int day);
     
     // Геттеры
-    const int getYear() const;
-    const int getMonth() const;
-    const int getDay() const ;
+    int getYear() const;
+    int getMonth() const;
+    int getDay() const ;
 
     // Метод для строкового представления
-    const std::string toString() const; 
+    std::string toString() const; 
 };
