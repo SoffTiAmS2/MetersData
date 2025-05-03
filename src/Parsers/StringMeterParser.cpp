@@ -1,4 +1,4 @@
-#include "Parsers/StringMeterParser.h"
+#include "parsers/StringMeterParser.h"
 #include "meters/AbstractMeter.h"
 #include <memory>
 #include <stdexcept>
