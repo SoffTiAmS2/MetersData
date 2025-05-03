@@ -1,19 +1,21 @@
 #pragma once
+
+#include "factorys/MeterFactory.h"
 #include "interfaces/IMeterParser.h"
-#include <vector>
+#include "parsUtils/StringSplitter.h"
+#include "parsUtils/StringValueParser.h"
+#include "StringDateParser.h"
+#include <string>
+#include <memory>
+
 
 class StringMeterParser : public IMeterParser {
-private:
-    // Разбивает строку на токены
-    std::vector<std::string> splitString(const std::string& input);
-
-    //парс типа
-    std::string typeParse(const std::string& token);
-    //парс даты
-    Date dateParse(const std::string& token);
-    //парс значения
-    float valueParse(const std::string& token);
-
 public:
-    Meter parse(const std::string& input) override;
+    std::unique_ptr<AbstractMeter> parse(const std::string& input) override;
+
+private:
+    MeterFactory factory;
+    StringSplitter splitter;
+    StringDateParser dateParser;
+    StringValueParser valueParser;
 };

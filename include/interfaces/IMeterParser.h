@@ -1,10 +1,11 @@
 #pragma once
-#include "Data/Meter.h"
+#include "meters/AbstractMeter.h"
+#include <memory>
 
 // Интерфейс парсера данных счетчика
 class IMeterParser {
 public:
-
     virtual ~IMeterParser() = default;
-    virtual Meter parse(const std::string& input) = 0;
+
+    virtual std::unique_ptr<AbstractMeter> parse(const std::string& input) = 0;
 };

@@ -1,9 +1,5 @@
 #include "utils/Validator.h"
 
-bool Validator::isValidType(const std::string& type) {
-    return !type.empty(); // Тип не должен быть пустым
-}
-
 bool Validator::isValidDateFormat(const std::string& dateStr) {
 
     bool ok = true; // валидность данных
@@ -39,7 +35,9 @@ bool Validator::isValidDateValues(int year, int month, int day) {
     if (month == 4 || month == 6 || month == 9 || month == 11) daysInMonth = 30;
 
     // условие когда дней может быть 28 или 29 зависит от высокосный год или нет
-    else if (month == 2) daysInMonth = ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) ? 29 : 28;
+    else if (month == 2){
+        daysInMonth = ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) ? 29 : 28;
+    }
 
     // если количество дней больше чем надо
     return day <= daysInMonth;

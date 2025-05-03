@@ -1,4 +1,4 @@
-#include "Core/ConsoleInterface.h"
+#include "console/ConsoleInterface.h"
 #include <QString>
 
 int main(){
