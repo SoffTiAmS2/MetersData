@@ -10,7 +10,7 @@ std::unique_ptr<AbstractMeter> MeterFactory::createMeter(
     const Date& date,
     float value,
     const std::string& param) {
-        if (type == "electricity" or type == "электичество") {
+        if (type == "electricity" or type == "электричество") {
 
             StringValueParser valueParser;
             float voltage = valueParser.parse(param);

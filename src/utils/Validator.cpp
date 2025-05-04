@@ -1,27 +1,10 @@
 #include "utils/Validator.h"
 
+
+
 bool Validator::isValidDateFormat(const std::string& dateStr) {
-
-    bool ok = true; // валидность данных
-    int numSeparators = 0; // количество разделяемых точек
-
-    for (int i = 0; i < dateStr.size()-1; i++) {
-        //если встретили разделитель то увеличиваем инкрементируем количество разделителей
-        if(dateStr[i] == '.'){
-            numSeparators++;
-            continue;
-        }
-
-        // у нас могут быть в дате только числа и никакие другие символы
-        if(!isdigit(dateStr[i])){
-            ok = false;
-            break;
-        }
-    }
-    // если количество разделителей больше чем 2 то у нас некоректные данные
-    if(numSeparators != 2) ok = false;
-
-    return ok;
+    // Проверяем формат даты через regex
+    return std::regex_match(dateStr, dateRegex());
 }
 
 bool Validator::isValidDateValues(int year, int month, int day) {
@@ -43,20 +26,23 @@ bool Validator::isValidDateValues(int year, int month, int day) {
     return day <= daysInMonth;
 }
 
+
 bool Validator::isValidValue(const std::string& valueStr) {
-    if (valueStr.empty()) return false;
+        // Проверяем числовое значение
+    return std::regex_match(valueStr, valueRegex());
+}
 
-    bool hasDecimalPoint = false; // Флаг для десятичной точки
-    bool hasDigits = false;       // Флаг для цифр
 
-    //проверяем коректность значения
-    for (char ch: valueStr) {
-        if (isdigit(ch)) hasDigits = true; //у нас должны быть числа
-        else if (ch == '.' || ch == ',') {
-            if (hasDecimalPoint) return false; // В числе может быть только одна десятичная точка
-            hasDecimalPoint = true;// поднимаем флаг десятичной точки
-        } else return false; // у нас не может быть других символов кроме разделительной точки и самих чисел
-    }
+const std::regex& Validator::dateRegex() {
+    static const std::regex instance(
+        R"(^(\d{4})\.(0?[1-9]|1[0-2])\.(0?[1-9]|[12][0-9]|3[01])$)"
+    );
+    return instance;
+}
 
-    return hasDigits;
+const std::regex& Validator::valueRegex() {
+    static const std::regex instance(
+        R"(^[+-]?\d+(?:[.,]\d+)?$)"
+    );
+    return instance;
 }

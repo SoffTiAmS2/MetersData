@@ -59,6 +59,7 @@ classDiagram
     
     class StringMeterParser {
         +parse(input: const string&): unique_ptr~AbstractMeter~
+        -normalizeType(type: const string&): string
         -factory: MeterFactory
         -splitter: StringSplitter
         -dateParser: StringDateParser
@@ -74,6 +75,10 @@ classDiagram
         +static isValidDateFormat(dateStr: const string&): bool
         +static isValidDateValues(year: int, month: int, day: int): bool
         +static isValidValue(valueStr: const string&): bool
+
+        dateRegex(): const regex&
+        valueRegex(): const regex&
+
     }
     
     class StringSplitter {

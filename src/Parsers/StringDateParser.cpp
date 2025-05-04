@@ -8,14 +8,14 @@ Date StringDateParser::parse(const std::string& input) const {
         throw std::invalid_argument("Неправильный формат даты: " + input);
     }
 
+    std::smatch matches;
+    std::regex_match(input, matches, Validator::dateRegex());
     // Находим позиции точек
-    size_t pos1 = input.find('.');
-    size_t pos2 = input.find('.', pos1 + 1);
 
     // Парсим значения года, месяца и дня
-    int year = std::stoi(input.substr(0, pos1));
-    int month = std::stoi(input.substr(pos1 + 1, pos2 - pos1 - 1));
-    int day = std::stoi(input.substr(pos2 + 1));
+    int year = std::stoi(matches[1].str());
+    int month = std::stoi(matches[2].str());
+    int day = std::stoi(matches[3].str());
 
     // Проверяем корректность значений даты
     if (!Validator::isValidDateValues(year, month, day)) {

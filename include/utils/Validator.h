@@ -1,12 +1,9 @@
 #pragma once
 #include <string>
-
+#include <regex>
 
 class Validator {
 public:
-    // Проверка типа ресурса (не пустая строка)
-    static bool isValidType(const std::string& type);
-
     // Проверка формата даты (гггг.мм.дд)
     static bool isValidDateFormat(const std::string& dateStr);
 
@@ -15,4 +12,7 @@ public:
 
     // Проверка числового значения
     static bool isValidValue(const std::string& valueStr);
+
+    static const std::regex& dateRegex();
+    static const std::regex& valueRegex();
 };

@@ -14,6 +14,9 @@ public:
     std::unique_ptr<AbstractMeter> parse(const std::string& input) override;
 
 private:
+    std::string normalizeType(const std::string& type) const;
+
+private:
     MeterFactory factory;
     StringSplitter splitter;
     StringDateParser dateParser;
