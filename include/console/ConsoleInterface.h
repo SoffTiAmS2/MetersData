@@ -1,17 +1,17 @@
 #pragma once
-
 #include <memory>
-#include "interfaces/IMeterParser.h"
+#include "controllers/MeterController.h"
+#include "views/MeterListView.h"
 
 class ConsoleInterface {
 private:
-    // Указатель на парсер
-    std::unique_ptr<IMeterParser> parser;
+    MeterController controller;
+    MeterListView listView;
 
-    // Вывод инструкций
-    void printInstructions() const;
+    void printMenu() const;
+    void displayMeters(const MeterList& meters) const;
 
 public:
-    // Реализация метода интерфейса
+    ConsoleInterface();
     void run();
 };

@@ -17,9 +17,9 @@ float ElectricityMeter::getVoltage() const {
 
 std::string ElectricityMeter::toString() const {
     std::ostringstream oss;
-    oss << "[Счётчик Электричества] "
-        << "Дата: " << getDate().toString()
-        << ", Значение: " << std::fixed << std::setprecision(2) << getValue()
-        << ", Напряжение: " << voltage << " В";
+    oss << "electricity"
+        << " " << getDate().toString()
+        << " " << std::fixed << std::setprecision(2) << getValue()
+        << " " << voltage;
     return oss.str();
 }

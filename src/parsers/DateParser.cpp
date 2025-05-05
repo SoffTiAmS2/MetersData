@@ -1,8 +1,8 @@
-#include "parsers/StringDateParser.h"
+#include "parsers/DateParser.h"
 #include "utils/Validator.h"
 #include <stdexcept>
 
-Date StringDateParser::parse(const std::string& input) const {
+Date DateParser::parse(const std::string& input) const {
     // Проверяем формат даты
     if (!Validator::isValidDateFormat(input)) {
         throw std::invalid_argument("Неправильный формат даты: " + input);

@@ -8,4 +8,5 @@ public:
     virtual ~IMeterParser() = default;
 
     virtual std::unique_ptr<AbstractMeter> parse(const std::string& input) = 0;
+
 };

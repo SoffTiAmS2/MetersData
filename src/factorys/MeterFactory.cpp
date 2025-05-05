@@ -2,7 +2,7 @@
 #include "meters/ElectricityMeter.h"
 #include "meters/WaterMeter.h"
 #include "meters/GasMeter.h"
-#include "parsUtils/StringValueParser.h"
+#include "parsUtils/ValueParser.h"
 
 
 std::unique_ptr<AbstractMeter> MeterFactory::createMeter(
@@ -12,7 +12,7 @@ std::unique_ptr<AbstractMeter> MeterFactory::createMeter(
     const std::string& param) {
         if (type == "electricity" or type == "электричество") {
 
-            StringValueParser valueParser;
+            ValueParser valueParser;
             float voltage = valueParser.parse(param);
             return std::make_unique<ElectricityMeter>(date, value, voltage);
         }

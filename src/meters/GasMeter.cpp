@@ -16,9 +16,9 @@ const std::string& GasMeter::getSerialNumber() const {
 
 std::string GasMeter::toString() const {
     std::ostringstream oss;
-    oss << "[Газовый счетчик] "
-        << "Дата: " << getDate().toString()
-        << ", Значение: " << std::fixed << std::setprecision(2) << getValue()
-        << ", Серийный номер: " << serialNumber << " В";
+    oss << "Gas "
+        << getDate().toString()
+        << " " << std::fixed << std::setprecision(2) << getValue()
+        << " " << serialNumber;
     return oss.str();
 }

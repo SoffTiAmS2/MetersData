@@ -1,7 +1,7 @@
-#include "parsUtils/StringValueParser.h"
+#include "parsUtils/ValueParser.h"
 #include "utils/Validator.h"
 
-float StringValueParser::parse(const std::string& input) const {
+float ValueParser::parse(const std::string& input) const {
     //проверяем правильность значения
     if(!Validator::isValidValue(input)){
         throw std::invalid_argument("Неправильный формат значения " + input);

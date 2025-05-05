@@ -11,9 +11,9 @@ bool WaterMeter::isHotWater() const {
 
 std::string WaterMeter::toString() const {
     std::ostringstream oss;
-    oss << "[Счётчик Воды] "
-        << "Дата: " << getDate().toString()
-        << ", Значение: " << std::fixed << std::setprecision(2) << getValue()
-        << ", Тип: " << (isHot ? "горячая" : "холодная");
+    oss << "water "
+        << getDate().toString()
+        << " " << std::fixed << std::setprecision(2) << getValue()
+        << " " << (isHot ? "горячая" : "холодная");
     return oss.str();
 }
