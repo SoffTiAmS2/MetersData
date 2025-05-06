@@ -1,6 +1,6 @@
 #include <QApplication>
-#include "ui/MainWindow.h"
-#include "console/ConsoleInterface.h"
+#include "view/ui/MainWindow.h"
+#include "view/console/ConsoleInterface.h"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
@@ -14,4 +14,4 @@ int main(int argc, char *argv[]) {
     console.run();
 
     return app.exec();
-}
+} 

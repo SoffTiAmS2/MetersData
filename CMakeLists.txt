@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.10)
-
 # Получаем имя проекта из имени текущей директории
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 project(${PROJECT_NAME})
@@ -29,7 +28,6 @@ set(FORMS_DIR ${CMAKE_SOURCE_DIR}/forms)
 set(RESOURCES_DIR ${CMAKE_SOURCE_DIR}/res)
 set(LIBS_DIR ${PROJECT_SOURCE_DIR}/external_libs)
 
-
 # Добавляем директорию с заголовками
 include_directories(${INCLUDE_DIR})
 
@@ -57,6 +55,7 @@ if(NOT Qt6_FOUND)
     message(FATAL_ERROR "Qt6 не найден!")
 endif()
 
+# Добавление модулей
 
 # Создание исполняемого файла в виде .app
 add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SOURCES} ${INCLUDE} ${FORMS} ${RESOURCES})
