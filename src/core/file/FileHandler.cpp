@@ -1,45 +1,47 @@
-// src/file/FileHandler.cpp
+// src/core/file/FileHandler.cpp
 #include "core/file/FileHandler.h"
-#include <QTextStream>
 #include <QFile>
-#include <QDebug>  // ← добавлен
+#include <QTextStream>
+#include <stdexcept>
 #include <memory>
 #include "core/file/TxtFormat.h"
 #include "core/file/CsvFormat.h"
 
-MeterList FileHandler::loadFromFile(const QString& path) {
-    QFile file(path);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        throw std::runtime_error("Не удалось открыть файл для чтения: " + path.toStdString());
-    }
+void FileHandler::save(const QString& path, const MeterList& data) const {
+    auto formatter = detectFormat(path);
 
-    QTextStream stream(&file);
-    
-    std::unique_ptr<IFileFormat> fileUtils = detectFormat(path);
-    
-    MeterList meters = fileUtils->parse(stream);
-    
-    file.close();
-    return meters;
-}
-
-void FileHandler::saveToFile(const QString& path, const MeterList& data) {
     QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         throw std::runtime_error("Не удалось открыть файл для записи: " + path.toStdString());
     }
 
-    QTextStream stream(&file);
-
-    for (const auto& meter : data.getMeters()) {
-        stream << meter->toString().c_str() << "\n";
+    try {
+        formatter->serializeTo(file, data);  // <-- Прямая запись
+        file.close();
+    } catch (...) {
+        file.close();  // Гарантируем закрытие файла
+        throw;         // Перебрасываем исключение дальше
     }
-
-    file.close();
 }
 
+void FileHandler::load(const QString& path, MeterList& data) const {
+    auto formatter = detectFormat(path);
 
-std::unique_ptr<IFileFormat> FileHandler::detectFormat(const QString& path) {
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly)) {
+        throw std::runtime_error("Не удалось открыть файл для чтения: " + path.toStdString());
+    }
+
+    try {
+        formatter->parse(file, data);  // <-- Прямое чтение
+        file.close();
+    } catch (...) {
+        file.close();  // Гарантируем закрытие файла
+        throw;         // Перебрасываем исключение дальше
+    }
+}
+
+std::unique_ptr<IFileFormat> FileHandler::detectFormat(const QString& path) const {
     if (path.endsWith(".csv", Qt::CaseInsensitive))
         return std::make_unique<CsvFormat>();
     else if (path.endsWith(".txt", Qt::CaseInsensitive))

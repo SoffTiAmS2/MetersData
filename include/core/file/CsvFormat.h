@@ -1,16 +1,16 @@
-// include/file/CsvFormat.h
+// include/core/file/CsvFormat.h
 #pragma once
 #include "core/file/IFileFormat.h"
 #include "core/model/MeterList.h"
 #include "core/model/AbstractMeter.h"
-#include "core/parser/MeterParser.h"
+#include "core/parser/IMeterParser.h"
 
 class CsvFormat : public IFileFormat {
 public:
     CsvFormat();
-    MeterList parse(QTextStream& input) override;
-    QString serialize(const MeterList& data) override;
+    void parse(QIODevice& input, MeterList& data) override;
+    void serializeTo(QIODevice& output, const MeterList& data) override;
 private:
     QString formatMeter(const AbstractMeter* meter);
-    MeterParser parser;
+    std::unique_ptr<IMeterParser> parser;
 };

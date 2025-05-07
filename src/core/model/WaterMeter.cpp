@@ -10,11 +10,15 @@ bool WaterMeter::isHotWater() const {
     return isHot;
 }
 
+std::string WaterMeter::getType() const {
+    return "Water";
+}
+
 std::string WaterMeter::toString() const {
     std::ostringstream oss;
-    oss << "water "
-        << getDate().toString()
+    oss << "Water"
+        << " " << getDate().toString()
         << " " << std::fixed << std::setprecision(2) << getValue()
-        << " " << (isHot ? "горячая" : "холодная");
+        << " " << (isHot ? "Hot" : "Cold");
     return oss.str();
 }

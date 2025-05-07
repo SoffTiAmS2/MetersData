@@ -1,25 +1,36 @@
-// src/controllers/MeterController.cpp
 #include "controller/MeterController.h"
-#include "core/file/FileHandler.h"
-#include "core/model/MeterList.h"
 #include <QDebug>
 
 MeterController::MeterController() {}
 
 void MeterController::loadFromFile(const QString& path) {
     try {
-        meters = fileHandler.loadFromFile(path);
+        fileHandler.load(path, meters);
     } catch (const std::exception& e) {
         throw;
     }
 }
 
-void MeterController::saveToFile(const QString& path) {
+void MeterController::saveToFile(const QString& path) const {
     try {
-        fileHandler.saveToFile(path, meters);
+        fileHandler.save(path, meters);
     } catch (const std::exception& e) {
         throw;
     }
+}
+
+void MeterController::addMeter(std::unique_ptr<AbstractMeter> meter) {
+    if (!meter) return;
+    meters.addMeter(std::move(meter));
+}
+
+void MeterController::removeMeter(size_t index) {
+    if (index >= meters.size()) return;
+    meters.removeMeter(index);
+}
+
+bool MeterController::empty() const {
+    return meters.empty();
 }
 
 const MeterList& MeterController::getMeters() const {

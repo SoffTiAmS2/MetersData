@@ -15,5 +15,6 @@ class AbstractMeter {
         const Date& getDate() const;
         float getValue() const;
         // Общий метод
+        virtual std::string getType() const = 0;
         virtual std::string toString() const = 0;
     };

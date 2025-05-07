@@ -2,36 +2,29 @@
 #include "core/file/TxtFormat.h"
 #include "core/model/MeterList.h"
 #include "core/parsUtils/StringSplitter.h"
+#include "core/parser/StringMeterParser.h"
 #include <QTextStream>
 #include <QString>
 
 TxtFormat::TxtFormat()
-    : parser(std::make_unique<StringSplitter>()) {}
+    : parser(std::make_unique<StringMeterParser>(std::make_unique<StringSplitter>())) {}
 
-MeterList TxtFormat::parse(QTextStream& input) {
-    MeterList meters;
-    while (!input.atEnd()) {
-        QString line = input.readLine();
-        try {
-            auto meter = parser.parse(line.toStdString());
-            meters.addMeter(std::move(meter));
-        } catch (const std::exception& e) {
-            throw;
-        }
+    
+void TxtFormat::parse(QIODevice& input, MeterList& data) {
+    QTextStream in(&input);
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        data.addMeter(parser->parse(line.toUtf8().toStdString()));
     }
+}
 
-    return meters;
+void TxtFormat::serializeTo(QIODevice& output, const MeterList& data) {
+    QTextStream out(&output);
+    for (const auto& meter : data.getMeters()) {
+        out << formatMeter(meter.get());
+    }
 }
 
 QString TxtFormat::formatMeter(const AbstractMeter* meter){
     return QString::fromStdString(meter->toString());
-}
-
-
-QString TxtFormat::serialize(const MeterList& data) {
-    QString result;
-    for (const auto& meter : data.getMeters()) {
-        result += formatMeter(meter.get()) + "\n";
-    }
-    return result;
 }

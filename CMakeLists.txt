@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
+
 # Получаем имя проекта из имени текущей директории
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 project(${PROJECT_NAME})
@@ -13,7 +14,7 @@ if(APPLE)
     message(STATUS "Building for macOS")
     set(CMAKE_MACOSX_RPATH 1)
     set(CMAKE_MACOSX_BUNDLE ON)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")  # Минимальная поддерживаемая версия macOS
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
     set(CMAKE_EXE_LINKER_FLAGS "-framework AppKit")
 endif()
 
@@ -55,13 +56,31 @@ if(NOT Qt6_FOUND)
     message(FATAL_ERROR "Qt6 не найден!")
 endif()
 
-# Добавление модулей
+# === ICU SETTINGS ===
+set(ICU_INCLUDE_DIR "${LIBS_DIR}/icu4c/include")
+set(ICU_LIB_DIR "${LIBS_DIR}/icu4c/lib")
+
+# Подключаем ICU вручную
+include_directories(${ICU_INCLUDE_DIR})
+link_directories(${ICU_LIB_DIR})
+
+# Список ICU библиотек — минимум нужно uc и i18n
+set(ICU_LIBS
+    icuuc
+    icui18n
+)
 
 # Создание исполняемого файла в виде .app
 add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SOURCES} ${INCLUDE} ${FORMS} ${RESOURCES})
 
 # Линковка с Qt
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets Qt6::Core Qt6::Gui Qt6::UiTools)
+target_link_libraries(${PROJECT_NAME}
+    PRIVATE Qt6::Widgets Qt6::Core Qt6::Gui Qt6::UiTools
+    ${ICU_LIBS}
+)
 
 # Подключаем include директории
-target_include_directories(${PROJECT_NAME} PRIVATE ${INCLUDE_DIR})
+target_include_directories(${PROJECT_NAME}
+    PRIVATE ${INCLUDE_DIR}
+    PRIVATE ${ICU_INCLUDE_DIR}
+)

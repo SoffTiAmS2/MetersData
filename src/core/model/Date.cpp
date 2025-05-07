@@ -1,16 +1,15 @@
 #include "core/model/Date.h"
-#include "utils/Validator.h"
+#include "utils/Utils.h"
 #include <iomanip>
 #include <sstream>
 
 Date::Date(int year, int month, int day)
     : year(year), month(month), day(day) {
-
-        if (!Validator::isValidDateValues(year, month, day)) {
-            throw std::invalid_argument("неправильный формат даты");
-        }
-
+        
+    if (!Utils::isValidDateValues(year, month, day)) {
+        throw std::invalid_argument("неправильный формат даты");
     }
+}
 
 
 int Date::getYear() const{

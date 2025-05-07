@@ -14,10 +14,16 @@ const std::string& GasMeter::getSerialNumber() const {
     return serialNumber;
 }
 
+
+
+std::string GasMeter::getType() const {
+    return "Gas";
+}
+
 std::string GasMeter::toString() const {
     std::ostringstream oss;
-    oss << "Gas "
-        << getDate().toString()
+    oss << "Gas"
+        << " " << getDate().toString()
         << " " << std::fixed << std::setprecision(2) << getValue()
         << " " << serialNumber;
     return oss.str();

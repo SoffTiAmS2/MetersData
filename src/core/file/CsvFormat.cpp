@@ -5,38 +5,33 @@
 #include <QString>
 #include <string>
 #include "core/parsUtils/CsvSplitter.h"
+#include "core/parser/StringMeterParser.h"
 
 CsvFormat::CsvFormat()
-    : parser(std::make_unique<CsvSplitter>()) {}
+    : parser(std::make_unique<StringMeterParser>(
+        std::make_unique<CsvSplitter>())) {}
 
-MeterList CsvFormat::parse(QTextStream& input) {
-    MeterList meters;
+void CsvFormat::parse(QIODevice& input, MeterList& data) {
+    QTextStream in(&input);
 
-    while (!input.atEnd()) {
-        QString line = input.readLine();
-        try {
-            auto meter = parser.parse(line.toStdString());
-            meters.addMeter(std::move(meter));
-        } catch (const std::exception& e) {
-            throw;
-        }
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        data.addMeter(parser->parse(line.toUtf8().toStdString()));
     }
+}
 
-    return meters;
+void CsvFormat::serializeTo(QIODevice& output, const MeterList& data) {
+    QTextStream out(&output);
+    out << "Type;Data;Value;Param\n";
+    for (const auto& meter : data.getMeters()) {
+        out << formatMeter(meter.get());
+    }
 }
 
 QString CsvFormat::formatMeter(const AbstractMeter* meter) {
 
     std::string teckod = meter->toString();
-    std::replace(teckod.begin(), teckod.end(), ' ', ',');
+    std::replace(teckod.begin(), teckod.end(), ' ', ';');
 
     return QString::fromStdString(teckod);
-}
-
-QString CsvFormat::serialize(const MeterList& data) {
-    QString result;
-    for (const auto& meter : data.getMeters()) {
-        result += formatMeter(meter.get()) + "\n";
-    }
-    return result;
 }

@@ -1,9 +1,9 @@
 #include "core/parsUtils/ValueParser.h"
-#include "utils/Validator.h"
+#include "utils/Utils.h"
 
 float ValueParser::parse(const std::string& input) const {
     //проверяем правильность значения
-    if(!Validator::isValidValue(input)){
+    if(!Utils::isValidValue(input)){
         throw std::invalid_argument("Неправильный формат значения " + input);
     }
 
@@ -12,6 +12,7 @@ float ValueParser::parse(const std::string& input) const {
     // Заменяем запятую на точку
     std::replace(floatStr.begin(), floatStr.end(), ',', '.');
 
+    float value = std::stof(floatStr);
     // Возращаем наше значение 
-    return std::stof(floatStr);
+    return value;
 }

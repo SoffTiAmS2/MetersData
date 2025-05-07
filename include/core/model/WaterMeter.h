@@ -12,5 +12,6 @@ public:
 
     bool isHotWater() const;
 
+    std::string getType() const override; 
     std::string toString() const override;
 };

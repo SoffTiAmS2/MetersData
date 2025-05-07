@@ -1,6 +1,7 @@
 #include "core/model/ElectricityMeter.h"
 #include <sstream>
 #include <iomanip>
+#include <string>
 
 ElectricityMeter::ElectricityMeter(const Date& date, float value, float voltage)
     : AbstractMeter(date, value), voltage(voltage) {
@@ -15,9 +16,13 @@ float ElectricityMeter::getVoltage() const {
     return voltage;
 }
 
+std::string ElectricityMeter::getType() const {
+    return "Electricity";
+}
+
 std::string ElectricityMeter::toString() const {
     std::ostringstream oss;
-    oss << "electricity"
+    oss << "Electricity"
         << " " << getDate().toString()
         << " " << std::fixed << std::setprecision(2) << getValue()
         << " " << voltage;
