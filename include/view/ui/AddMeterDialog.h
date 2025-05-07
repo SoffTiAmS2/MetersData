@@ -24,6 +24,7 @@ private slots:
 
 private:
     void hideAllExtraFields();
+    bool validateInput() const;
     Ui::AddMeterDialog* ui;
 };
 

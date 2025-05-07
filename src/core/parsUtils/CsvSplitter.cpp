@@ -7,7 +7,7 @@ std::vector<std::string> CsvSplitter::split(const std::string& input) const {
     std::stringstream ss(input);
     std::string token;
 
-    while (std::getline(ss, token, ',')) {
+    while (std::getline(ss, token, ';')) {
         tokens.push_back(token);
     }
 

@@ -33,7 +33,7 @@ void MeterListView::updateView(const MeterList& meters) {
         } 
         else if (auto* electricityMeter = dynamic_cast<const ElectricityMeter*>(meter.get())) {
             Q_UNUSED(electricityMeter);
-            paramItem->setText(QStringLiteral("Напряжение"));
+            paramItem->setText(QString::number(meter->getValue(), 'f', 2));
         }
 
         setItem(row, 0, typeItem);
@@ -53,10 +53,8 @@ MeterListView::MeterListView(QWidget* parent)
     setHorizontalHeaderLabels(headers);
 
     // Отключаем обычное выделение (по ЛКМ)
-    setSelectionMode(QAbstractItemView::NoSelection);
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setAlternatingRowColors(true);
-    verticalHeader()->setVisible(false);
     horizontalHeader()->setStretchLastSection(true);
     // setContextMenuPolicy(Qt::CustomContextMenu); // Включаем поддержку контекстного меню
 }

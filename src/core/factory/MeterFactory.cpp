@@ -20,10 +20,10 @@ std::unique_ptr<AbstractMeter> MeterFactory::createMeter (
         }
         else if (type == "water" or type == "вода") {
             std::string normalesParam = Utils::normalizationString(param);
-            if ((normalesParam != "hot" && normalesParam != "cold") || 
+            if ((normalesParam != "hot" && normalesParam != "cold") && 
                 (normalesParam != "горячая" && normalesParam != "холодная")) {
-                throw std::invalid_argument(
-                    "Счетчик воды: ожидается 'hot' или 'cold'.");
+                    throw std::invalid_argument(
+                        "Счетчик воды: ожидается 'hot' или 'cold'.");
             }
             bool isHot = (normalesParam == "hot");
             return std::make_unique<WaterMeter>(date, value, isHot);

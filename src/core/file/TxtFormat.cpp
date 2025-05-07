@@ -21,7 +21,7 @@ void TxtFormat::parse(QIODevice& input, MeterList& data) {
 void TxtFormat::serializeTo(QIODevice& output, const MeterList& data) {
     QTextStream out(&output);
     for (const auto& meter : data.getMeters()) {
-        out << formatMeter(meter.get());
+        out << formatMeter(meter.get())  <<  '\n';
     }
 }
 
