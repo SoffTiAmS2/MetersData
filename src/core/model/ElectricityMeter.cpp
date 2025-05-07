@@ -21,10 +21,13 @@ std::string ElectricityMeter::getType() const {
 }
 
 std::string ElectricityMeter::toString() const {
+
     std::ostringstream oss;
+    
     oss << "Electricity"
         << " " << getDate().toString()
         << " " << std::fixed << std::setprecision(2) << getValue()
         << " " << voltage;
+    
     return oss.str();
 }

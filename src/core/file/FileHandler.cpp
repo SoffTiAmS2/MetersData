@@ -11,39 +11,55 @@ void FileHandler::save(const QString& path, const MeterList& data) const {
     auto formatter = detectFormat(path);
 
     QFile file(path);
+
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         throw std::runtime_error("Не удалось открыть файл для записи: " + path.toStdString());
     }
 
     try {
-        formatter->serializeTo(file, data);  // <-- Прямая запись
+
+        formatter->serializeTo(file, data);
+
         file.close();
     } catch (...) {
-        file.close();  // Гарантируем закрытие файла
-        throw;         // Перебрасываем исключение дальше
+
+        file.close();
+
+        throw; 
     }
 }
 
-void FileHandler::load(const QString& path, MeterList& data) const {
+void FileHandler::load(const QString& path, MeterList* data) const {
+
     auto formatter = detectFormat(path);
 
     QFile file(path);
+
     if (!file.open(QIODevice::ReadOnly)) {
-        throw std::runtime_error("Не удалось открыть файл для чтения: " + path.toStdString());
+
+        throw std::runtime_error(
+            "Не удалось открыть файл для чтения: " + path.toStdString()
+        );
     }
 
     try {
-        formatter->parse(file, data);  // <-- Прямое чтение
+
+        formatter->parse(file, data);
+
         file.close();
     } catch (...) {
-        file.close();  // Гарантируем закрытие файла
-        throw;         // Перебрасываем исключение дальше
+
+        file.close();
+
+        throw;      
     }
 }
 
 std::unique_ptr<IFileFormat> FileHandler::detectFormat(const QString& path) const {
+
     if (path.endsWith(".csv", Qt::CaseInsensitive))
         return std::make_unique<CsvFormat>();
+    
     else if (path.endsWith(".txt", Qt::CaseInsensitive))
         return std::make_unique<TxtFormat>();
 

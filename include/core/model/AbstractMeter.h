@@ -1,20 +1,23 @@
 #pragma once
+
 #include <string>
 #include "Date.h"
 
 
-class AbstractMeter {
-    protected:
-        Date date;
-        float value;
-    public:
-        AbstractMeter(const Date& date, float value);
 
-        virtual ~AbstractMeter() = default;
+class AbstractMeter { 
+public:
+    AbstractMeter(const Date& date, float value);
+
+    const Date& getDate() const;
+    float getValue() const;
     
-        const Date& getDate() const;
-        float getValue() const;
-        // Общий метод
-        virtual std::string getType() const = 0;
-        virtual std::string toString() const = 0;
-    };
+    virtual std::string getType() const = 0;
+    virtual std::string toString() const = 0;
+    
+    virtual ~AbstractMeter() = default;
+
+protected:
+    Date date;
+    float value;
+};

@@ -20,5 +20,5 @@ private:
     void setupStyle();
 
 signals:
-    void rowDeleted(int row); // ← Здесь объявляем сигнал
+    void rowDeleted(int row);
 };

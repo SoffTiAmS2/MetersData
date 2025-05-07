@@ -5,7 +5,7 @@ MeterController::MeterController() {}
 
 void MeterController::loadFromFile(const QString& path) {
     try {
-        fileHandler.load(path, meters);
+        fileHandler.load(path, &meters);
     } catch (const std::exception& e) {
         throw;
     }

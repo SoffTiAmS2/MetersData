@@ -1,5 +1,4 @@
-#ifndef ADDMETERDIALOG_H
-#define ADDMETERDIALOG_H
+#pragma once
 
 #include <QDialog>
 #include <memory>
@@ -27,5 +26,3 @@ private:
     bool validateInput() const;
     Ui::AddMeterDialog* ui;
 };
-
-#endif // ADDMETERDIALOG_H

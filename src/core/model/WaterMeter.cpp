@@ -16,9 +16,11 @@ std::string WaterMeter::getType() const {
 
 std::string WaterMeter::toString() const {
     std::ostringstream oss;
+
     oss << "Water"
         << " " << getDate().toString()
         << " " << std::fixed << std::setprecision(2) << getValue()
         << " " << (isHot ? "Hot" : "Cold");
+
     return oss.str();
 }

@@ -43,9 +43,9 @@ file(GLOB_RECURSE FORMS "${FORMS_DIR}/*.ui")
 file(GLOB_RECURSE RESOURCES "${RESOURCES_DIR}/*.qrc")
 
 # Выводим отладочную информацию
-message(STATUS "Sources: ${SOURCES}")
-message(STATUS "Forms: ${FORMS}")
-message(STATUS "Resources: ${RESOURCES}")
+# message(STATUS "Sources: ${SOURCES}")
+# message(STATUS "Forms: ${FORMS}")
+# message(STATUS "Resources: ${RESOURCES}")
 
 # Указываем, где искать UI-файлы для AUTOUIC
 set(CMAKE_AUTOUIC_SEARCH_PATHS ${FORMS_DIR})

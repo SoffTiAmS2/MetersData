@@ -7,6 +7,7 @@ void MeterList::addMeter(std::unique_ptr<AbstractMeter> meter) {
 
 void MeterList::removeMeter(size_t index) {
     if (index < meters.size()) {
+        
         meters.erase(meters.begin() + index);
     }
 }
@@ -19,7 +20,7 @@ const std::vector<std::unique_ptr<AbstractMeter>>& MeterList::getMeters() const 
     return meters;
 }
 
-size_t MeterList::size() const {
+int MeterList::size() const {
     return meters.size();
 }
 

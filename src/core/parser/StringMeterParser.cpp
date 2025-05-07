@@ -4,12 +4,11 @@
 #include <stdexcept>
 #include <QString>
 #include <vector>
-#include <utility>  // для std::move
 #include "utils/Utils.h"
 
 
 StringMeterParser::StringMeterParser(std::unique_ptr<ISpliter> splitter) 
-    : splitter(std::move(splitter)) {}  // список инициализации
+    : splitter(std::move(splitter)) {}
 
 std::unique_ptr<AbstractMeter> StringMeterParser::parse(const std::string& input) const {
     std::vector<std::string>  tokens = splitter->split(input);
@@ -17,7 +16,6 @@ std::unique_ptr<AbstractMeter> StringMeterParser::parse(const std::string& input
         throw std::invalid_argument("Недостаточно данных в строке: " + input);
     }
 
-    // Извлекаем и проверяем токены
     std::string typeStr = Utils::normalizationString(tokens[0]);
     std::string dateStr = tokens[1];
     std::string valueStr = tokens[2];

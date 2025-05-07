@@ -11,7 +11,6 @@
 
 #include "controller/MeterController.h"
 #include "view/ui/MeterListView.h"
-#include "view/ui/AddMeterDialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -31,9 +30,7 @@ private slots:
     void loadFileActions();
     void saveFileActions();
     void saveCurrentFileActions();
-    void onDeleteSelectedRow(); // ← Объявляем слот
-
-    // void showContextMenu(const QPoint& pos);
+    void onDeleteSelectedRow();
     
 
 private:

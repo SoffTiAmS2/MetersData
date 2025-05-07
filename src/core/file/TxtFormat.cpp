@@ -6,20 +6,29 @@
 #include <QTextStream>
 #include <QString>
 
-TxtFormat::TxtFormat()
-    : parser(std::make_unique<StringMeterParser>(std::make_unique<StringSplitter>())) {}
+TxtFormat::TxtFormat() : 
+    parser(std::make_unique<StringMeterParser> (
+        std::make_unique<StringSplitter>()
+    )
+) {}
 
     
-void TxtFormat::parse(QIODevice& input, MeterList& data) {
+void TxtFormat::parse(QIODevice& input, MeterList* data) {
+
     QTextStream in(&input);
+    
     while (!in.atEnd()) {
+    
         QString line = in.readLine();
-        data.addMeter(parser->parse(line.toUtf8().toStdString()));
+    
+        data->addMeter(parser->parse(line.toUtf8().toStdString()));
     }
 }
 
 void TxtFormat::serializeTo(QIODevice& output, const MeterList& data) {
+    
     QTextStream out(&output);
+
     for (const auto& meter : data.getMeters()) {
         out << formatMeter(meter.get())  <<  '\n';
     }

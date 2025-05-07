@@ -4,7 +4,6 @@
 
 
 bool Utils::isValidDateFormat(const std::string& dateStr) {
-    // Проверяем формат даты через regex
     return std::regex_match(dateStr, dateRegex());
 }
 
@@ -29,15 +28,17 @@ bool Utils::isValidDateValues(int year, int month, int day) {
 
 
 bool Utils::isValidValue(const std::string& valueStr) {
-        // Проверяем числовое значение
     return std::regex_match(valueStr, valueRegex());
 }
 
 std::string Utils::normalizationString(const std::string& input){
+
     icu::UnicodeString ustr = icu::UnicodeString::fromUTF8(input);
     ustr.toLower();
+    
     std::string result;
     ustr.toUTF8String(result);
+    
     return result;
 }
 

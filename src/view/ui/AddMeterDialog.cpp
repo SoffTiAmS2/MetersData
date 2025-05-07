@@ -1,4 +1,5 @@
 #include "view/ui/AddMeterDialog.h"
+#include "core/factory/MeterFactory.h"
 #include "ui_addmeterdialog.h"
 
 #include "core/model/AbstractMeter.h"
@@ -10,13 +11,15 @@
 #include <QMessageBox>
 #include <QDoubleValidator>
 #include <stdexcept>
+#include <string>
 
 AddMeterDialog::AddMeterDialog(QWidget* parent)
     : QDialog(parent), ui(new Ui::AddMeterDialog) {
     ui->setupUi(this);
 
     // Инициализация выпадающего списка типов
-    ui->typeComboBox->addItems({"Вода", "Электричество", "Газ"});
+    ui->typeComboBox->addItems({"water", "electricity", "gas"});
+
     connect(ui->typeComboBox, 
         &QComboBox::currentTextChanged, 
         this, 
@@ -27,14 +30,9 @@ AddMeterDialog::AddMeterDialog(QWidget* parent)
     ui->dateEdit->setDate(QDate::currentDate());
     ui->dateEdit->setDisplayFormat("yyyy.MM.dd");  // Точный формат даты
 
-    // Валидатор для значения (только float)
+    // Валидатор для значения
     ui->valueEdit->setValidator(
-        new QDoubleValidator(
-        0.0, 
-        999999.99, 
-        2, 
-        this
-        )
+        new QDoubleValidator(0.0, 999999.99, 2, this)
     );
 
     // Валидатор для напряжения
@@ -47,6 +45,11 @@ AddMeterDialog::AddMeterDialog(QWidget* parent)
         )
     );
 
+    ui->typeComboBox->setCurrentIndex(0);
+
+    hideAllExtraFields();
+    ui->hotCheckBox->show();
+    ui->hotCheckBoxLabel->show();
 }
 
 AddMeterDialog::~AddMeterDialog() {
@@ -54,41 +57,41 @@ AddMeterDialog::~AddMeterDialog() {
 }
 
 std::unique_ptr<AbstractMeter> AddMeterDialog::getMeter() const {
-    if (!validateInput()) {
-        return nullptr;
-    }
-
     try {
-        QString type = ui->typeComboBox->currentText();
+        std::string type = ui->typeComboBox->currentText().toUtf8().toStdString();
         Date date = DateParser().parse(
-            ui->dateEdit->date().toString("yyyy.MM.dd").toStdString()
+            ui->dateEdit->date().toString("yyyy.MM.dd").toUtf8().toStdString()
         );
+
         float value = ValueParser().parse(
             ui->valueEdit->text().toUtf8().toStdString()
         );
-        if (type == "Вода") {
+
+        std::string paramStr;
+        if (type == "water") {
             bool isHot = ui->hotCheckBox->isChecked();
-            return std::make_unique<WaterMeter>(date, value, isHot);
-        } else if (type == "Электричество") {
-            float voltage = ValueParser().parse(
-                ui->voltageEdit->text().toUtf8().toStdString()
-            );
-            return std::make_unique<ElectricityMeter>(date, value, voltage);
-        } else if (type == "Газ") {
-            std::string serial = ui->serialEdit->text().toStdString();
-            return std::make_unique<GasMeter>(date, value, serial);
-        } else {
+
+            paramStr = isHot ? "Hot" : "Cold";
+        } else if (type == "electricity") {
+            paramStr = ui->voltageEdit->text().toUtf8().toStdString();
+        }
+        else if (type == "gas") {
+            paramStr = ui->serialEdit->text().toUtf8().toStdString();
+        }
+        else {
             throw std::invalid_argument(
-                "Неизвестный тип счётчика: " + type.toStdString()
+                "Неизвестный тип счётчика: " + type
             );
         }
 
+        return MeterFactory().createMeter(type, date, value, paramStr);
     } catch (const std::exception& e) {
         QMessageBox::critical(
             nullptr, 
             tr("Ошибка"), 
             QString::fromStdString(e.what())
         );
+
         return nullptr;
     }
 }
@@ -109,64 +112,16 @@ void AddMeterDialog::onTypeChanged(const QString& type) {
     hideAllExtraFields();
 
     // Показываем нужные поля
-    if (type == "Вода") {
+    if (type == "water") {
         ui->hotCheckBox->show();
         ui->hotCheckBoxLabel->show();
-    } else if (type == "Электричество") {
+    } 
+    else if (type == "electricity") {
         ui->voltageLabel->show();
         ui->voltageEdit->show();
-    } else if (type == "Газ") {
+    } 
+    else if (type == "gas") {
         ui->serialLabel->show();
         ui->serialEdit->show();
     }
-
-    // Очистка полей при смене типа
-    ui->valueEdit->clear();
-    ui->voltageEdit->clear();
-    ui->serialEdit->clear();
-}
-
-bool AddMeterDialog::validateInput() const {
-    // Проверяем значение
-    bool ok;
-    float value = ValueParser().parse(
-        ui->valueEdit->text().toUtf8().toStdString()
-    );
-    if (value < 0) {
-        QMessageBox::warning(
-            nullptr, 
-            tr("Ошибка"), 
-            tr("Значение должно быть положительным числом")
-        );
-        return false;
-    }
-
-    QString type = ui->typeComboBox->currentText();
-
-    // Проверяем напряжение, если выбрано электричество
-    if (type == "Электричество") {
-        float voltage = ValueParser().parse(
-            ui->voltageEdit->text().toUtf8().toStdString()
-        );
-        if (voltage < 0) {
-            QMessageBox::warning(
-                nullptr, 
-                tr("Ошибка"), 
-                tr("Напряжение должно быть положительным числом")
-            );
-            return false;
-        }
-    }
-
-    // Проверяем серийный номер, если выбран газ
-    if (type == "Газ" && ui->serialEdit->text().isEmpty()) {
-        QMessageBox::warning(
-            nullptr, 
-            tr("Ошибка"), 
-            tr("Введите серийный номер")
-        );
-        return false;
-    }
-
-    return true;
 }

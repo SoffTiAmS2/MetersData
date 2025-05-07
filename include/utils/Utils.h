@@ -13,6 +13,7 @@ public:
     // Проверка числового значения
     static bool isValidValue(const std::string& valueStr);
 
+    // нормализация числа
     static std::string normalizationString(const std::string& input);
 
     static const std::regex& dateRegex();
