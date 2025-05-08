@@ -1,10 +1,12 @@
 // src/file/TxtFormat.cpp
 #include "core/file/TxtFormat.h"
 #include "core/model/MeterList.h"
-#include "core/parsUtils/StringSplitter.h"
+#include "core/spliter/StringSplitter.h"
 #include "core/parser/StringMeterParser.h"
+#include "utils/Logger.h"
 #include <QTextStream>
 #include <QString>
+#include <string>
 
 TxtFormat::TxtFormat() : 
     parser(std::make_unique<StringMeterParser> (
@@ -17,11 +19,19 @@ void TxtFormat::parse(QIODevice& input, MeterList* data) {
 
     QTextStream in(&input);
     
+    int numberLine = 0;
+
     while (!in.atEnd()) {
     
         QString line = in.readLine();
-    
-        data->addMeter(parser->parse(line.toUtf8().toStdString()));
+        numberLine++;
+        try{
+            data->addMeter(parser->parse(line.toUtf8().toStdString()));
+        } catch(const std::exception& e){
+            std::string message = std::to_string(numberLine) + " " + e.what();
+            Logger::instance().log(message);
+            continue;
+        }
     }
 }
 

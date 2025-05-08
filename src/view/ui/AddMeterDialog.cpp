@@ -1,13 +1,10 @@
 #include "view/ui/AddMeterDialog.h"
 #include "core/factory/MeterFactory.h"
 #include "ui_addmeterdialog.h"
-
 #include "core/model/AbstractMeter.h"
-#include "core/model/WaterMeter.h"
-#include "core/model/ElectricityMeter.h"
-#include "core/model/GasMeter.h"
 #include "core/parser/DateParser.h"
-#include "core/parsUtils/ValueParser.h"
+#include "core/parser/ValueParser.h"
+#include "utils/Logger.h"
 #include <QMessageBox>
 #include <QDoubleValidator>
 #include <stdexcept>
@@ -86,11 +83,12 @@ std::unique_ptr<AbstractMeter> AddMeterDialog::getMeter() const {
 
         return MeterFactory().createMeter(type, date, value, paramStr);
     } catch (const std::exception& e) {
-        QMessageBox::critical(
+        QMessageBox::warning(
             nullptr, 
-            tr("Ошибка"), 
+            "Ошибка", 
             QString::fromStdString(e.what())
         );
+        Logger::instance().log(e.what());
 
         return nullptr;
     }

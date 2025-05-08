@@ -1,5 +1,5 @@
 // src/parsUtils/CsvSplitter.cpp
-#include "core/parsUtils/CsvSplitter.h"
+#include "core/spliter/CsvSplitter.h"
 #include <sstream>
 
 std::vector<std::string> CsvSplitter::split(const std::string& input) const {

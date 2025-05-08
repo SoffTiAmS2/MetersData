@@ -2,6 +2,7 @@
 #include "core/model/MeterList.h"
 
 void MeterList::addMeter(std::unique_ptr<AbstractMeter> meter) {
+    if (!meter) return;
     meters.push_back(std::move(meter));
 }
 

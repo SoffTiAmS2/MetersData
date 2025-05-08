@@ -5,7 +5,7 @@
 Date DateParser::parse(const std::string& input) const {
 
     if (!Utils::isValidDateFormat(input)) {
-        throw std::invalid_argument("Неправильный формат даты: " + input);
+        throw std::invalid_argument("Неправильный формат даты: \"" + input + '"');
     }
 
     std::smatch matches;

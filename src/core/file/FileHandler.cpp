@@ -15,18 +15,10 @@ void FileHandler::save(const QString& path, const MeterList& data) const {
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         throw std::runtime_error("Не удалось открыть файл для записи: " + path.toStdString());
     }
+    
+    formatter->serializeTo(file, data);
 
-    try {
-
-        formatter->serializeTo(file, data);
-
-        file.close();
-    } catch (...) {
-
-        file.close();
-
-        throw; 
-    }
+    file.close();
 }
 
 void FileHandler::load(const QString& path, MeterList* data) const {
@@ -35,6 +27,7 @@ void FileHandler::load(const QString& path, MeterList* data) const {
 
     QFile file(path);
 
+
     if (!file.open(QIODevice::ReadOnly)) {
 
         throw std::runtime_error(
@@ -42,17 +35,8 @@ void FileHandler::load(const QString& path, MeterList* data) const {
         );
     }
 
-    try {
-
-        formatter->parse(file, data);
-
-        file.close();
-    } catch (...) {
-
-        file.close();
-
-        throw;      
-    }
+    formatter->parse(file, data);
+    file.close();
 }
 
 std::unique_ptr<IFileFormat> FileHandler::detectFormat(const QString& path) const {

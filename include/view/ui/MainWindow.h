@@ -27,10 +27,13 @@ public:
 
 private slots:
     void addObjectActions();
+    
+    void onDeleteSelectedRow();
+
     void loadFileActions();
     void saveFileActions();
     void saveCurrentFileActions();
-    void onDeleteSelectedRow();
+    
     
 
 private:
@@ -43,9 +46,11 @@ private:
 
     void setupUi();
     void connectSignalsAndSlots();
+    void updateWindowTitle();
+
     void loadFromFile(const QString& path);
     void saveToFile(const QString& path = "");
-    void updateWindowTitle();
+
     void closeEvent(QCloseEvent* event) override;
     void dragEnterEvent(QDragEnterEvent* event) override;
     void dropEvent(QDropEvent* event) override;

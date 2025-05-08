@@ -4,8 +4,9 @@
 #include <QTextStream>
 #include <QString>
 #include <string>
-#include "core/parsUtils/CsvSplitter.h"
+#include "core/spliter/CsvSplitter.h"
 #include "core/parser/StringMeterParser.h"
+#include "utils/Logger.h"
 
 CsvFormat::CsvFormat() : 
     parser (
@@ -17,12 +18,21 @@ CsvFormat::CsvFormat() :
 void CsvFormat::parse(QIODevice& input, MeterList* data) {
 
     QTextStream in(&input);
+    
+    int numberLine = 0;
 
     while (!in.atEnd()) {
     
         QString line = in.readLine();
-    
-        data->addMeter(parser->parse(line.toUtf8().toStdString()));
+        numberLine++;
+        
+        try{
+            data->addMeter(parser->parse(line.toUtf8().toStdString()));
+        } catch(const std::exception& e){
+            std::string message = std::to_string(numberLine) + " " + e.what();
+            Logger::instance().log(message);
+            continue;
+        }
     }
 }
 

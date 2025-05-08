@@ -10,13 +10,14 @@ classDiagram
         -detectFormat(path: QString): unique_ptr~IFileFormat~
     }
     note for FileHandler "Класс-обёртка над файловыми операциями: выбирает нужный формат, открывает поток, делегирует парсинг/сериализацию."
+    note for FileHandler "дает исключение когда файл не удалось открыть"
 
     class IFileFormat {
         <<interface>>
         +parse(input: QIODevice&, data: MeterList)
         +serializeTo(output: QIODevice&, data: const MeterList&)
     }
-    note for IFileFormat "Интерфейс для форматов хранения: TXT, CSV, возможно, JSON и другие."
+    note for IFileFormat "Интерфейс для форматов хранения: TXT, CSV, возможно, JSON и другие. обрабатывает ошибки парсинга"
 
     class TxtFormat {
         +parse(input: QIODevice&, data: MeterList)
@@ -39,21 +40,35 @@ classDiagram
     %% =============== Парсеры ===============
     class IMeterParser {
         <<interface>>
-        +parse(line: string): unique_ptr~AbstractMeter~
+        +parse(input: string): unique_ptr~AbstractMeter~
     }
-    note for IMeterParser "Интерфейс, превращающий строку в объект AbstractMeter."
+    note for IMeterParser "Интерфейс, превращающий данные в объект AbstractMeter."
 
     class StringMeterParser {
-        +parse(line: string): unique_ptr~AbstractMeter~
+        +StringMeterParser(spliter: unique_ptr~ISpliter~)
+        +parse(input: string): unique_ptr~AbstractMeter~
         -splitter: unique_ptr~ISpliter~
         -dateParser: DateParser
         -valueParser: ValueParser
         -factory: MeterFactory
     }
-    IMeterParser <|.. StringMeterParser : реализация по умолчанию
 
-    note for StringMeterParser "Реализация парсера строки: использует разделитель, парсеры даты/значения и фабрику для создания объекта."
+    IMeterParser <|.. StringMeterParser : реализация
 
+    note for StringMeterParser "Реализация парсера строки: использует разделитель, парсеры даты/значения и фабрику для создания объекта. при ошибки выдает исключения"
+
+    class DateParser {
+        +parse(input: string): Date
+    }
+
+    note for DateParser "Извлекает дату из строки, вызывает валидацию. может дать исключение"
+
+    class ValueParser {
+        +parse(input: string): float
+    }
+
+    note for ValueParser "Парсит числовое значение, может кидать исключения."
+    
     TxtFormat --> IMeterParser : использует парсер строк
     CsvFormat --> IMeterParser : использует парсер строк
     StringMeterParser --> ISpliter : делегирует разбиение строки
@@ -65,33 +80,24 @@ classDiagram
     %% =============== Разделители строк ===============
     class ISpliter {
         <<interface>>
-        +split(line: string): vector~string~
+        +split(input: string): vector~string~
     }
+
     note for ISpliter "Интерфейс для разбора строки по разделителям (CSV, пробел и т.д.)"
 
     class StringSplitter {
-        +split(line: string): vector~string~
+        +split(input: string): vector~string~
     }
 
     class CsvSplitter {
-        +split(line: string): vector~string~
+        +split(input: string): vector~string~
     }
 
     ISpliter <|.. StringSplitter : реализация TXT
     ISpliter <|.. CsvSplitter : реализация CSV
 
 
-    %% =============== Парсеры значений и валидация ===============
-    class DateParser {
-        +parse(input: string): Date
-    }
-    note for DateParser "Извлекает дату из строки, вызывает валидацию."
-
-    class ValueParser {
-        +parse(input: string): float
-    }
-    note for ValueParser "Парсит числовое значение, может кидать исключения."
-
+    %% =============== валидация и другие утилиты===============
     class Utils {
         <<utility>>
         +static isValidDateFormat(str: string): bool
@@ -101,6 +107,7 @@ classDiagram
         +static dateRegex(): regex&
         +static valueRegex(): regex&
     }
+
     note for Utils "Набор статических проверок: формат и допустимость даты/значения."
 
     DateParser ..> Utils : вызывает isValidDateFormat
@@ -117,7 +124,7 @@ classDiagram
         #date: Date
         #value: float
     }
-    note for AbstractMeter "Базовый класс счётчиков: дата + значение, интерфейс для toString()."
+    note for AbstractMeter "Базовый класс счётчиков: дата + значение, интерфейс для toString(). исключение"
 
     class ElectricityMeter {
         +getVoltage(): float
@@ -125,7 +132,7 @@ classDiagram
         +getType(): string
         -voltage: float
     }
-    note for ElectricityMeter "Расширяет AbstractMeter: добавляет напряжение."
+    note for ElectricityMeter "Расширяет AbstractMeter: добавляет напряжение. исключение"
 
     class WaterMeter {
         +isHotWater(): bool
@@ -133,7 +140,7 @@ classDiagram
         +getType(): string
         -isHot: bool
     }
-    note for WaterMeter "Расширяет AbstractMeter: признак горячей воды."
+    note for WaterMeter "Расширяет AbstractMeter: признак горячей воды. исключение"
 
     class GasMeter {
         +getSerialNumber(): string
@@ -141,7 +148,7 @@ classDiagram
         +getType(): string
         -serialNumber: string
     }
-    note for GasMeter "Расширяет AbstractMeter: добавляет серийный номер."
+    note for GasMeter "Расширяет AbstractMeter: добавляет серийный номер. исключение"
 
     class Date {
         +Date(year: int, month: int, day: int)
@@ -150,7 +157,7 @@ classDiagram
         +getDay(): int
         +toString(): string
     }
-    note for Date "Представление даты: Год, месяц, день. Используется повсеместно."
+    note for Date "Представление даты: Год, месяц, день. Используется повсеместно. исключение"
 
     class MeterList {
         +addMeter(meter: unique_ptr~AbstractMeter~)
@@ -161,12 +168,12 @@ classDiagram
         +empty(): bool
         -meters: vector~unique_ptr~AbstractMeter~~
     }
-    note for MeterList "Контейнер для всех счётчиков, поддерживает добавление, удаление, итерацию."
+    note for MeterList "Контейнер для всех счётчиков, поддерживает добавление, удаление, итерацию. "
 
     class MeterFactory {
         +createMeter(type: string, date: Date, value: float, param: string): unique_ptr~AbstractMeter~
     }
-    note for MeterFactory "Создаёт счётчики нужного типа по строковому идентификатору и параметрам."
+    note for MeterFactory "Создаёт счётчики нужного типа по строковому идентификатору и параметрам. дает исключение"
 
     AbstractMeter <|-- ElectricityMeter
     AbstractMeter <|-- WaterMeter

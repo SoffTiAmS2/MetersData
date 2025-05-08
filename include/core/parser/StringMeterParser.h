@@ -3,8 +3,8 @@
 #include "DateParser.h"
 #include "core/factory/MeterFactory.h"
 #include "core/model/AbstractMeter.h"
-#include "core/parsUtils/ISpliter.h"
-#include "core/parsUtils/ValueParser.h"
+#include "core/spliter/ISpliter.h"
+#include "ValueParser.h"
 #include "IMeterParser.h"
 #include <string>
 #include <memory>
@@ -15,8 +15,8 @@ public:
     std::unique_ptr<AbstractMeter> parse(const std::string& input) const override;
 
 private:
-    MeterFactory factory;
     std::unique_ptr<ISpliter> splitter;
     DateParser dateParser;
     ValueParser valueParser;
+    MeterFactory factory;
 };

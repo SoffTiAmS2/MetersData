@@ -1,9 +1,11 @@
 #include "core/parser/StringMeterParser.h"
 #include "core/model/AbstractMeter.h"
+#include <locale>
 #include <memory>
 #include <stdexcept>
 #include <QString>
 #include <vector>
+#include "utils/Logger.h"
 #include "utils/Utils.h"
 
 
@@ -28,6 +30,8 @@ std::unique_ptr<AbstractMeter> StringMeterParser::parse(const std::string& input
         return factory.createMeter(typeStr, date, value, paramStr);
     } 
     catch (const std::exception& e) {
-        throw std::runtime_error(std::string("Ошибка парсинга: ") + e.what());
+        std::string message = std::string("Ошибка парсинга: ") + e.what() + " в " + input;
+        throw std::invalid_argument(message);
+        return nullptr;
     }
 }

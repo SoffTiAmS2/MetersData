@@ -1,4 +1,4 @@
-#include "core/parsUtils/StringSplitter.h"
+#include "core/spliter/StringSplitter.h"
 
 std::vector<std::string> StringSplitter::split(const std::string& input) const {
 

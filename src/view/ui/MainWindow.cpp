@@ -1,6 +1,7 @@
 #include "view/ui/MainWindow.h"
 #include "controller/MeterController.h"
 #include "ui_mainwindow.h"
+#include "utils/Logger.h"
 #include "view/ui/AddMeterDialog.h"
 #include <QMenu>
 #include <QAction>
@@ -8,6 +9,7 @@
 #include <QDebug>
 #include <QShortcut>
 #include <QContextMenuEvent>
+#include <string>
 
 
 
@@ -22,20 +24,6 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow() {
     delete ui;
-}
-
-
-void MainWindow::setupUi() {
-    ui->setupUi(this);
-
-    meterView = std::make_unique<MeterListView>(ui->meterTableView->parentWidget());
-    meterView->setSelectionMode(QAbstractItemView::SingleSelection);
-    meterView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
-    ui->meterTableView->setWidget(meterView.get());
-    ui->meterTableView->setWidgetResizable(true);
-
-    updateWindowTitle();
 }
 
 
@@ -54,6 +42,34 @@ void MainWindow::addObjectActions() {
 }
 
 
+void MainWindow::onDeleteSelectedRow() {
+    int index = meterView->selectedRow();
+    if (index >= 0 && index < controller.getMeters().size()) {
+
+        controller.removeMeter(index);
+        
+        meterView->updateView(controller.getMeters());
+        
+        isModified = true;
+        
+        updateWindowTitle();
+    }
+}
+
+
+void MainWindow::loadFileActions() {
+    QString projectRoot = QCoreApplication::applicationDirPath();
+
+    QString filePath = QFileDialog::getOpenFileName(
+        this,
+        tr("Открыть файл"),
+        projectRoot
+    );
+
+    loadFromFile(filePath);
+}
+
+
 void MainWindow::saveFileActions() {
     saveToFile();  // Сохранение с выбором пути
 }
@@ -68,48 +84,71 @@ void MainWindow::saveCurrentFileActions() {
 }
 
 
-void MainWindow::loadFromFile(const QString& path) {
-    controller.loadFromFile(path);
+void MainWindow::setupUi() {
+    ui->setupUi(this);
 
-    meterView->updateView(controller.getMeters());
+    meterView = std::make_unique<MeterListView>(ui->meterTableView->parentWidget());
+    meterView->setSelectionMode(QAbstractItemView::SingleSelection);
+    meterView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    ui->meterTableView->setWidget(meterView.get());
+    ui->meterTableView->setWidgetResizable(true);
+
+    updateWindowTitle();
 }
 
-void MainWindow::loadFileActions() {
-    QString projectRoot = QCoreApplication::applicationDirPath();
 
-    QString filePath = QFileDialog::getOpenFileName(
-        this,
-        tr("Открыть файл"),
-        projectRoot
-    );
+void MainWindow::updateWindowTitle() {
+    QString title = "Приложение для учёта счётчиков";
 
-    if (filePath.isEmpty()) {
+    if (!currentFilePath.isEmpty()) {
+        title += " - " + currentFilePath;
+    }
+    if (isModified) {
+        title += " *";
+    }
+
+    setWindowTitle(title);
+}
+
+
+void MainWindow::loadFromFile(const QString& path) {
+
+    if (path.isEmpty()) {
         return;
     }
 
     try{
-        loadFromFile(filePath);
+        controller.loadFromFile(path);
 
-        currentFilePath = filePath;
+        currentFilePath = path;
         isModified = false;
+
+        meterView->updateView(controller.getMeters());
 
         updateWindowTitle();
     }
     catch (const std::exception& e) {
+        std::string message = "Не удалось загрузить файл: ";
         QMessageBox::critical(
             this,
             tr("Ошибка загрузки"),
-            tr("Не удалось загрузить файл: ") + QString::fromStdString(e.what())
+            QString::fromStdString(message + e.what())
         );
+        Logger::instance().log(message + e.what());
     } 
     catch (...) {
+        std::string message = "Произошла неожиданная ошибка при загрузки файла.";
         QMessageBox::critical(
             this,
             tr("Неизвестная ошибка"),
-            tr("Произошла неожиданная ошибка при загрузке файла.")
+            QString::fromStdString(message)
         );
+        Logger::instance().log(message);
     }
 }
+
+
 
 void MainWindow::saveToFile(const QString& path) {
     QString selectedPath = path;
@@ -124,7 +163,11 @@ void MainWindow::saveToFile(const QString& path) {
         );
     }
 
-    if (!selectedPath.isEmpty()) {
+    if (selectedPath.isEmpty()) {
+        return;
+    }
+
+    try{
         controller.saveToFile(selectedPath);
 
         currentFilePath = selectedPath;
@@ -132,21 +175,25 @@ void MainWindow::saveToFile(const QString& path) {
 
         updateWindowTitle();
     }
-
-}
-
-void MainWindow::onDeleteSelectedRow() {
-    int index = meterView->selectedRow();
-    if (index >= 0 && index < controller.getMeters().size()) {
-
-        controller.removeMeter(index);
-        
-        meterView->updateView(controller.getMeters());
-        
-        isModified = true;
-        
-        updateWindowTitle();
+    catch (const std::exception& e) {
+        std::string message = "Не удалось сохранить файл: ";
+        QMessageBox::critical(
+            this,
+            tr("Ошибка сохранения"),
+            QString::fromStdString(message + e.what())
+        );
+        Logger::instance().log(message + e.what());
+    } 
+    catch (...) {
+        std::string message = "Произошла неожиданная ошибка при сохранение файла.";
+        QMessageBox::critical(
+            this,
+            tr("Неизвестная ошибка"),
+            QString::fromStdString(message)
+        );
+        Logger::instance().log(message);
     }
+
 }
 
 
@@ -179,6 +226,7 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     }
 }
 
+
 void MainWindow::dragEnterEvent(QDragEnterEvent* event) {
     if (event->mimeData()->hasUrls()) {
         event->acceptProposedAction();
@@ -190,39 +238,9 @@ void MainWindow::dropEvent(QDropEvent* event) {
 
     if (!urls.isEmpty()) {
         QString filePath = urls.first().toLocalFile();
-    
-        if (!filePath.isEmpty()) {
-            try {
-                loadFromFile(filePath);
-    
-                currentFilePath = filePath;
-                isModified = false;
-    
-                updateWindowTitle();
-            } catch (const std::exception& e) {
-                QMessageBox::critical(
-                    this, 
-                    "Ошибка", 
-                    QString(
-                        "Не удалось загрузить файл: "
-                    ) + QString::fromStdString(e.what())
-                );
-            }
-        }
-    }
-}
 
-void MainWindow::updateWindowTitle() {
-    QString title = "Приложение для учёта счётчиков";
-
-    if (!currentFilePath.isEmpty()) {
-        title += " - " + currentFilePath;
+        loadFromFile(filePath);
     }
-    if (isModified) {
-        title += " *";
-    }
-
-    setWindowTitle(title);
 }
 
 
