@@ -1,0 +1,5 @@
+add_subdirectory(factory)
+add_subdirectory(file)
+add_subdirectory(model)
+add_subdirectory(parser)
+add_subdirectory(spliter)

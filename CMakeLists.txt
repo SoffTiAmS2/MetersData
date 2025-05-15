@@ -1,86 +1,81 @@
 cmake_minimum_required(VERSION 3.10)
+project(MetersData LANGUAGES CXX)
 
-# Получаем имя проекта из имени текущей директории
-get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-project(${PROJECT_NAME})
-
-# Включаем автоматическую обработку UI, MOC и ресурсов
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-
-# Для macOS: создаём .app и задаём параметры деплоя
-if(APPLE)
-    message(STATUS "Building for macOS")
-    set(CMAKE_MACOSX_RPATH 1)
-    set(CMAKE_MACOSX_BUNDLE ON)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
-    set(CMAKE_EXE_LINKER_FLAGS "-framework AppKit")
-endif()
-
-# Устанавливаем стандарт C++
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Пути к исходным файлам, заголовкам и UI-файлам
+# === Включаем автоматическую генерацию moc/uic/rcc
+# set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+# set(CMAKE_AUTORCC ON)
+
+
+
+# === Пути проекта
 set(SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 set(INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
-set(FORMS_DIR ${CMAKE_SOURCE_DIR}/forms)
-set(RESOURCES_DIR ${CMAKE_SOURCE_DIR}/res)
+set(FORMS_DIR ${PROJECT_SOURCE_DIR}/forms)
+set(RESOURCES_DIR ${PROJECT_SOURCE_DIR}/res)
 set(LIBS_DIR ${PROJECT_SOURCE_DIR}/external_libs)
 
-# Добавляем директорию с заголовками
-include_directories(${INCLUDE_DIR})
-
-# Собираем файлы
-file(GLOB_RECURSE SOURCES
-    ${SOURCE_DIR}/*.cpp
-    ${SOURCE_DIR}/*/*.cpp
-    ${SOURCE_DIR}/*/*/*.cpp
-)
-file(GLOB_RECURSE INCLUDE "${INCLUDE_DIR}/*.h")
-file(GLOB_RECURSE FORMS "${FORMS_DIR}/*.ui")
-file(GLOB_RECURSE RESOURCES "${RESOURCES_DIR}/*.qrc")
-
-# Выводим отладочную информацию
-# message(STATUS "Sources: ${SOURCES}")
-# message(STATUS "Forms: ${FORMS}")
-# message(STATUS "Resources: ${RESOURCES}")
-
-# Указываем, где искать UI-файлы для AUTOUIC
-set(CMAKE_AUTOUIC_SEARCH_PATHS ${FORMS_DIR})
-
-# Находим компоненты Qt6
-find_package(Qt6 COMPONENTS Widgets Core Gui UiTools REQUIRED)
-if(NOT Qt6_FOUND)
-    message(FATAL_ERROR "Qt6 не найден!")
+# === Поддержка macOS
+if(APPLE)
+    set(CMAKE_MACOSX_RPATH 1)
+    set(CMAKE_MACOSX_BUNDLE ON)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "11.0")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -framework AppKit")
 endif()
 
-# === ICU SETTINGS ===
+# === Поиск Qt6
+find_package(Qt6 REQUIRED COMPONENTS Widgets Core Gui UiTools Test)
+
+# === ICU
 set(ICU_INCLUDE_DIR "${LIBS_DIR}/icu4c/include")
 set(ICU_LIB_DIR "${LIBS_DIR}/icu4c/lib")
-
-# Подключаем ICU вручную
 include_directories(${ICU_INCLUDE_DIR})
 link_directories(${ICU_LIB_DIR})
+set(ICU_LIBS icuuc icui18n)
 
-# Список ICU библиотек — минимум нужно uc и i18n
-set(ICU_LIBS
-    icuuc
-    icui18n
-)
+# === Добавляем подпроекты
+add_subdirectory(src/core/model)
+add_subdirectory(src/core/spliter)
+add_subdirectory(src/core/parser)
+add_subdirectory(src/core/file)
+add_subdirectory(src/core/factory)
+add_subdirectory(src/utils)
+add_subdirectory(src/controller)
+add_subdirectory(src/view)
 
-# Создание исполняемого файла в виде .app
-add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SOURCES} ${INCLUDE} ${FORMS} ${RESOURCES})
+# === Собираем основное приложение
+file(GLOB_RECURSE SOURCES ${SOURCE_DIR}/*.cpp)
+file(GLOB_RECURSE HEADERS ${INCLUDE_DIR}/*.h)
+file(GLOB_RECURSE RESOURCES ${RESOURCES_DIR}/*.qrc)
 
-# Линковка с Qt
+set(CMAKE_AUTOUIC_SEARCH_PATHS ${PROJECT_SOURCE_DIR}/forms)
+
+add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${SOURCES} ${HEADERS} ${RESOURCES})
+
+# === Линковка
 target_link_libraries(${PROJECT_NAME}
-    PRIVATE Qt6::Widgets Qt6::Core Qt6::Gui Qt6::UiTools
-    ${ICU_LIBS}
+    PRIVATE
+        Qt6::Widgets
+        Qt6::Gui
+        Qt6::Core
+        Qt6::UiTools
+        Qt6::Test
+        model
+        spliter
+        parser
+        file
+        factory
+        utils
+        controller
+        view
+        ${ICU_LIBS}
 )
 
-# Подключаем include директории
-target_include_directories(${PROJECT_NAME}
-    PRIVATE ${INCLUDE_DIR}
-    PRIVATE ${ICU_INCLUDE_DIR}
-)
+target_include_directories(${PROJECT_NAME} PRIVATE ${ICU_INCLUDE_DIR})
+
+
+enable_testing()
+add_subdirectory(tests)

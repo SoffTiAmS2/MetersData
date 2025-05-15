@@ -9,7 +9,7 @@ bool Utils::isValidDateFormat(const std::string& dateStr) {
 
 bool Utils::isValidDateValues(int year, int month, int day) {
     // проверка на правильность чисел годов и дней не может быть меньше 1 и месецев тоже 
-    if (year < 0 || month < 1 || month > 12 || day < 1) return false;
+    if (year < 1 || month < 1 || month > 12 || day < 1) return false;
 
     // по умолчанию дней 31
     int daysInMonth = 31;
