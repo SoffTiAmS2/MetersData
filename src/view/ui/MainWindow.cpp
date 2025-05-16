@@ -10,6 +10,7 @@
 #include <QShortcut>
 #include <QContextMenuEvent>
 #include <string>
+#include <QProcess>
 
 
 
@@ -60,11 +61,7 @@ void MainWindow::onDeleteSelectedRow() {
 void MainWindow::loadFileActions() {
     QString projectRoot = QCoreApplication::applicationDirPath();
 
-    QString filePath = QFileDialog::getOpenFileName(
-        this,
-        tr("Открыть файл"),
-        projectRoot
-    );
+    QString filePath = getOpenFileName();
 
     loadFromFile(filePath);
 }
@@ -155,12 +152,7 @@ void MainWindow::saveToFile(const QString& path) {
 
     if (selectedPath.isEmpty()) {
 
-        selectedPath = QFileDialog::getSaveFileName(
-            this,
-            tr("Сохранить файл"),
-            "",
-            "Текстовые файлы (*.txt);;CSV-файлы (*.csv)"
-        );
+        selectedPath = getSaveFileName();
     }
 
     if (selectedPath.isEmpty()) {
@@ -241,6 +233,28 @@ void MainWindow::dropEvent(QDropEvent* event) {
 
         loadFromFile(filePath);
     }
+}
+
+QString MainWindow::getOpenFileName() {
+    QProcess process;
+    process.start("osascript", QStringList()
+        << "-e" << "POSIX path of (choose file with prompt \"Выберите файл\")");
+    process.waitForFinished();
+    QString path = process.readAllStandardOutput().trimmed();
+    return path;
+}
+
+
+QString MainWindow::getSaveFileName() {
+    QProcess process;
+    process.start("osascript", QStringList()
+        << "-e" << "POSIX path of (choose file name with prompt \"Сохранить файл как\")");
+    process.waitForFinished();
+    QString path = process.readAllStandardOutput().trimmed();
+    if (!path.endsWith(".txt") && !path.endsWith(".csv")) {
+        path += ".txt"; // по умолчанию
+    }
+    return path;
 }
 
 

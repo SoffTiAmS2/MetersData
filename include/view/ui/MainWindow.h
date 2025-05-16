@@ -9,6 +9,8 @@
 #include <QCloseEvent>
 #include <QMessageBox>
 
+
+
 #include "controller/MeterController.h"
 #include "view/ui/MeterListView.h"
 
@@ -54,4 +56,8 @@ private:
     void closeEvent(QCloseEvent* event) override;
     void dragEnterEvent(QDragEnterEvent* event) override;
     void dropEvent(QDropEvent* event) override;
+
+
+    QString getOpenFileName();
+    QString getSaveFileName();
 };

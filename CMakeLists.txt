@@ -66,7 +66,6 @@ target_link_libraries(${PROJECT_NAME}
         model
         spliter
         parser
-        file
         factory
         utils
         controller
